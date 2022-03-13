@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 3559514328600540986}
   - component: {fileID: 3338018903293076044}
   - component: {fileID: 212767745177585590}
+  - component: {fileID: 166257651716033474}
   m_Layer: 0
-  m_Name: Hamburger
+  m_Name: SM_UnsearchField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +41,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4241554395794333903}
-  m_Mesh: {fileID: 4300002, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
+  m_Mesh: {fileID: -1181837295169345741, guid: d1cec726a9dfba642b9ee03a1746bee4, type: 3}
 --- !u!23 &3338018903293076044
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -60,12 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100012, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
-  - {fileID: 2100014, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
-  - {fileID: 2100016, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
-  - {fileID: 2100018, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
-  - {fileID: 2100020, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
-  - {fileID: 2100008, guid: 54b107e50acd7e24b96d7de887c68833, type: 3}
+  - {fileID: 5561349426305759274, guid: 614832e6df0b0b84eb1b869fadba2788, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,3 +95,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f32df7158890fd4ea6feadcccae9293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBomb: 0
+  nearByBombs: 0
+  adjacentFields: []
+  numbers:
+  - {fileID: 919132149155446097, guid: 58279f6776b98704fad794fa6fcd6c50, type: 3}
+  - {fileID: 919132149155446097, guid: fd1423cf37b7ea146acad7e805d67d1c, type: 3}
+  - {fileID: 919132149155446097, guid: 480260e8671f84d4ea7f3cddc058f1f0, type: 3}
+  - {fileID: 919132149155446097, guid: 644f15943e79e894f8faeb9313a67bbc, type: 3}
+  - {fileID: 919132149155446097, guid: 3e14b2322360f6a419734dabab4dd90a, type: 3}
+  - {fileID: 919132149155446097, guid: 199caecdc53d3f943bcba3476efb55ec, type: 3}
+  - {fileID: 919132149155446097, guid: 5f77463682587a845b5313c5de6f57fb, type: 3}
+  - {fileID: 919132149155446097, guid: 50fb2fd32af354b44aa9e97e4d7af466, type: 3}
+  searchedField: {fileID: 919132149155446097, guid: 614832e6df0b0b84eb1b869fadba2788, type: 3}
+--- !u!64 &166257651716033474
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4241554395794333903}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1181837295169345741, guid: d1cec726a9dfba642b9ee03a1746bee4, type: 3}
