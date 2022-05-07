@@ -20,7 +20,6 @@ public class Minesweeper : MonoBehaviour
     //Setting the bombs
     public int numberOfBombs;
     private GameObject randomGameObject;
-    private Material Mat;
     private int randomIndex;
     private GeneralInfo selectedBombScript;
 
@@ -34,12 +33,12 @@ public class Minesweeper : MonoBehaviour
         //Setting the length of the array
         spawnedGameObjects = new GameObject[width * length];
         //Spawning the different objects at different positions based on the loop's value
-        for (int i = 0; i < length; i++)
+        for (int l = 0; l < length; l++)
         {
-            for (int j = 0; j < width; j++)
+            for (int w = 0; w < width; w++)
             {
-                spawnGameObject(posX,posZ,addIndex + j);
-                spawnedGameObjects[addIndex + j] = Clone;
+                spawnGameObject(posX,posZ,addIndex + w);
+                spawnedGameObjects[addIndex + w] = Clone;
                 posX = posX + moveAmountX;
             }
             posX = 0;
@@ -65,7 +64,6 @@ public class Minesweeper : MonoBehaviour
             {
                 int numberOfAdjacentBombs = 0;
                 int index = System.Array.IndexOf(spawnedGameObjects, spawnedGameObject);
-                currentGameObjectScript.adjacentFields = new GameObject[8];
                 numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width - 1, spawnedGameObject, 0);
                 numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width, spawnedGameObject, 1);
                 numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width + 1, spawnedGameObject, 2);
@@ -86,6 +84,8 @@ public class Minesweeper : MonoBehaviour
     void spawnGameObject(float X,float Z,int number)
     {
         Clone = Instantiate(GameObjectToSpawn, (transform.position + new Vector3(X,0,Z)), Quaternion.identity);
+        GeneralInfo cloneScript = Clone.GetComponent<GeneralInfo>();
+        cloneScript.index = number;
         Clone.name = Clone.name + number;
         return;
     }
@@ -95,33 +95,31 @@ public class Minesweeper : MonoBehaviour
     {
         randomIndex = Random.Range(0, spawnedGameObjects.Length - 1);
         randomGameObject = spawnedGameObjects[randomIndex];
-        Mat = randomGameObject.GetComponent<MeshRenderer>().material;
-        if (Mat.color == Color.red)
+        selectedBombScript = randomGameObject.GetComponent<GeneralInfo>();
+        if (selectedBombScript.isBomb == true)
         {
             findRandomGameObject();
         }
         else
         {
-            selectedBombScript = randomGameObject.GetComponent<GeneralInfo>();
             selectedBombScript.isBomb = true;
-            Mat.color = Color.red;
         }
     }
 
     //Seeing how many fields around the object have isBomb=true
     int checkForBombs(int outcomeOfEquation, GameObject gameObject, int index)
     {
-        int numberOfAdjacentBombs = 0;
-        if (outcomeOfEquation < spawnedGameObjects.Length - 1 && outcomeOfEquation > 0)
+        if (outcomeOfEquation <= spawnedGameObjects.Length - 1 && outcomeOfEquation >= 0)
         {
             GameObject adjacentField = spawnedGameObjects[outcomeOfEquation];
             GeneralInfo currentGameObjectScript = gameObject.GetComponent<GeneralInfo>();
             if (checkLocationOfAdjacentField(gameObject,adjacentField))
             {
-                currentGameObjectScript.adjacentFields[index] = adjacentField;
+                currentGameObjectScript.adjacentFields.Add(adjacentField);
                 GeneralInfo adjacentFieldScript = adjacentField.GetComponent<GeneralInfo>();
                 if (adjacentFieldScript.isBomb == true)
                 {
+                    int numberOfAdjacentBombs = 0;
                     numberOfAdjacentBombs = numberOfAdjacentBombs + 1;
                     return numberOfAdjacentBombs;
                 }
