@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Minesweeper : MonoBehaviour
@@ -15,13 +13,15 @@ public class Minesweeper : MonoBehaviour
 
     //Setting the camera position
     public Camera currentCamera;
-    private float distanceOfCamera;
 
     //Setting the bombs
     public int numberOfBombs;
     private GameObject randomGameObject;
     private int randomIndex;
     private GeneralInfo selectedBombScript;
+
+    //Debug
+    public bool ShowBombs;
 
     // At the start of the game
     void Start()
@@ -59,23 +59,20 @@ public class Minesweeper : MonoBehaviour
         //Setting the nearby bombs values on the GeneralInfo script on the fields depending on the amount of bombs around that field
         foreach (GameObject spawnedGameObject in spawnedGameObjects)
         {
-            GeneralInfo currentGameObjectScript = spawnedGameObject.GetComponent<GeneralInfo>();
-            if (currentGameObjectScript.isBomb != true)
+            int numberOfAdjacentBombs = 0;
+            int index = System.Array.IndexOf(spawnedGameObjects, spawnedGameObject);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width - 1, spawnedGameObject, 0);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width, spawnedGameObject, 1);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width + 1, spawnedGameObject, 2);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - 1, spawnedGameObject, 3);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + 1, spawnedGameObject, 4);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width - 1, spawnedGameObject, 5);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width, spawnedGameObject, 6);
+            numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width + 1, spawnedGameObject, 7);
+            if (numberOfAdjacentBombs > 0)
             {
-                int numberOfAdjacentBombs = 0;
-                int index = System.Array.IndexOf(spawnedGameObjects, spawnedGameObject);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width - 1, spawnedGameObject, 0);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width, spawnedGameObject, 1);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - width + 1, spawnedGameObject, 2);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index - 1, spawnedGameObject, 3);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + 1, spawnedGameObject, 4);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width - 1, spawnedGameObject, 5);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width, spawnedGameObject, 6);
-                numberOfAdjacentBombs = numberOfAdjacentBombs + checkForBombs(index + width + 1, spawnedGameObject, 7);
-                if (numberOfAdjacentBombs > 0)
-                {
-                    currentGameObjectScript.nearByBombs = numberOfAdjacentBombs;
-                }
+                GeneralInfo currentGameObjectScript = spawnedGameObject.GetComponent<GeneralInfo>();
+                currentGameObjectScript.nearByBombs = numberOfAdjacentBombs;
             }
         }
     }
@@ -103,6 +100,12 @@ public class Minesweeper : MonoBehaviour
         else
         {
             selectedBombScript.isBomb = true;
+            if (ShowBombs == true)
+            {
+                MeshRenderer meshGameObject = randomGameObject.GetComponent<MeshRenderer>();
+                meshGameObject.material.color = Color.red;
+            }
+            
         }
     }
 

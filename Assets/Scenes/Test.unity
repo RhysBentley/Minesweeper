@@ -345,12 +345,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameObjectToSpawn: {fileID: 4241554395794333903, guid: ec20d241298a00d4ba7dbff36af3793a, type: 3}
-  width: 10
-  length: 10
+  width: 15
+  length: 15
   moveAmountX: 1
   moveAmountZ: 1
   currentCamera: {fileID: 963194227}
-  numberOfBombs: 10
+  numberOfBombs: 25
+  ShowBombs: 0
 --- !u!4 &1282159667
 Transform:
   m_ObjectHideFlags: 0

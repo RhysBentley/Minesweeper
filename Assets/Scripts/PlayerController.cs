@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public Camera playerCamera;
 
-    // Update is called once per frame
     void Update()
     {
+        //Event happening on left mouse button
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
@@ -19,6 +17,7 @@ public class PlayerController : MonoBehaviour
                 hitGameObjectScript.determineLeftClick();
             }
         }
+        //Event happening on right mouse button
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);

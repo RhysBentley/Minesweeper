@@ -4,17 +4,43 @@ using UnityEngine;
 
 public class GeneralInfo : MonoBehaviour
 {
+    ///Variables
+    //Bomb Info
     public bool isBomb;
     public int nearByBombs = 0;
-    public List<GameObject> adjacentFields = new List<GameObject>();
     public GameObject[] numbers;
-    public GameObject searchedField;
-    public int index;
-    private List<GameObject> alreadySearchedFields = new List<GameObject>();
-    private bool hasBeenSearched;
-    private Material Mat;
-    private bool isFlagged;
+    public float delayOfExplosion = 0.0f;
+    public List<GameObject> alreadySearchedBombs = new List<GameObject>();
 
+    //Index of the Minesweeper Script Array
+    public int index;
+
+    //Info about adjacentFields
+    public GameObject searchedField;
+    public List<GameObject> adjacentFields = new List<GameObject>();
+    private List<GameObject> alreadySearchedFields = new List<GameObject>();
+    private GeneralInfo adjacentFieldScript;
+    private bool hasBeenSearched;
+    private bool hasBeenRevealed;
+
+    //Flagging the field
+    private bool isFlagged;
+    private Color originalColour;
+    private Color flagColour = Color.red;
+
+    //gameObject Info
+    public MeshFilter unsearchedFieldMeshFilter;
+    public Mesh searchedFieldMesh;
+    private MeshRenderer meshGameObject;
+
+    //Setting some information for later use
+    void Start()
+    {
+        meshGameObject = gameObject.GetComponent<MeshRenderer>();
+        originalColour = meshGameObject.material.color;
+    }
+
+    //Using when the field has been left clicked, call event is in PlayerController.cs
     public void determineLeftClick()
     {
         if (isFlagged == true)
@@ -23,7 +49,9 @@ public class GeneralInfo : MonoBehaviour
         }
         if (isBomb == true)
         {
-            UnityEditor.EditorApplication.isPlaying = false;
+            meshGameObject.material.color = Color.blue;
+            checkForBombs();
+            return;
         }
         if (nearByBombs > 0)
         {
@@ -31,11 +59,12 @@ public class GeneralInfo : MonoBehaviour
             GameObject number = Instantiate(selectedNumber, (gameObject.transform.position), Quaternion.identity);
             number.transform.Rotate(0,0,180);
             number.transform.Rotate(90,0,0);
-            GameObject spawnedSearchedField = Instantiate(searchedField, (gameObject.transform.position), Quaternion.identity);
-            Destroy(gameObject);
+            hasBeenRevealed = true;
+            unsearchedFieldMeshFilter.mesh = searchedFieldMesh;
         }
         else
         {
+            //Shows all other empty fields adjacent to this
             foreach (GameObject adjacentField in adjacentFields)
             {
                 foreach (GameObject alreadySearchedField in alreadySearchedFields)
@@ -47,43 +76,89 @@ public class GeneralInfo : MonoBehaviour
                     }
                 }
                 hasBeenSearched = false;
-                setSearchedFields(adjacentField);
+                if (adjacentField != null)
+                {
+                    if (hasBeenSearched == false)
+                    {
+                        alreadySearchedFields.Add(adjacentField);
+                        adjacentFieldScript = adjacentField.GetComponent<GeneralInfo>();
+                        adjacentFieldScript.hasBeenRevealed = true;
+                        adjacentFieldScript.unsearchedFieldMeshFilter.mesh = searchedFieldMesh;
+                        adjacentFieldScript.determineLeftClick();
+                    }
+                }
             }
-            Destroy(gameObject);
+            unsearchedFieldMeshFilter.mesh = searchedFieldMesh;
         }
     }
 
+    //Planting the flag, called from ther player controller
     public void plantFlag()
     {
-        MeshRenderer meshGameObject = gameObject.GetComponent<MeshRenderer>();
-        if (meshGameObject.material.color != Color.green)
+        //Showing the flag
+        if (meshGameObject.material.color != flagColour)
         {
-            meshGameObject.material.color = Color.green;
-            isFlagged = true;
+            if (hasBeenRevealed == false)
+            {
+                meshGameObject.material.color = flagColour;
+                isFlagged = true;
+            }
         }
+        //Hiding the flag
         else
         {
-            meshGameObject.material.color = new Color (0.6415094f,0.6415094f,0.6415094f);
+            meshGameObject.material.color = originalColour;
             isFlagged = false;
         }
     }
 
-    public void setSearchedFields(GameObject adjacentField)
+    public void checkForBombs()
     {
-        if (adjacentField != null)
+        foreach (GameObject adjacentField in adjacentFields)
         {
-            if (hasBeenSearched == false)
+            if (adjacentField != null)
             {
-                alreadySearchedFields.Add(adjacentField);
-                GameObject spanwedSearchedField = Instantiate(searchedField, (gameObject.transform.position), Quaternion.identity);
-                GeneralInfo adjacentFieldScript = adjacentField.GetComponent<GeneralInfo>();
-                adjacentFieldScript.determineLeftClick();
+                foreach (GameObject alreadySearchedBomb in alreadySearchedBombs)
+                {
+                    if (alreadySearchedBomb == adjacentField)
+                    {
+                        hasBeenSearched = true;
+                        return;
+                    }
+                }
+                hasBeenSearched = false;
+                if (hasBeenSearched == false)
+                {
+                    alreadySearchedFields.Add(adjacentField);
+                    MeshRenderer meshRenderer = adjacentField.GetComponent<MeshRenderer>();
+                    adjacentFieldScript = adjacentField.GetComponent<GeneralInfo>();
+                    if (adjacentFieldScript.isBomb == true)
+                    {
+                        meshRenderer.material.color = Color.green;
+                    }
+                    else
+                    {
+                        meshRenderer.material.color = Color.blue;
+                    }
+                    adjacentFieldScript.afterCheckBombs();
+                }
+            }
+            else
+            {
+                return;
             }
         }
-        else
-        {
-            Destroy(gameObject);
-            GameObject spanwedSearchedField = Instantiate(searchedField, (gameObject.transform.position), Quaternion.identity);
-        }
+    }
+
+    public void afterCheckBombs()
+    {
+        delayOfExplosion = delayOfExplosion + 0.2f;
+        StartCoroutine(Wait(delayOfExplosion));
+    }
+
+    public IEnumerator Wait(float time)
+    {
+        yield return new WaitForSeconds(time);
+        checkForBombs();
     }
 }
